@@ -1,0 +1,144 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Medicine Box</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="shell">
+
+    <header>
+      <div>
+        <span class="eyebrow">IOT HEALTHCARE SYSTEM</span>
+        <h1>Smart Medicine Box</h1>
+        <p>Manage medication schedules and monitor your medicine box.</p>
+      </div>
+      <span class="status">● Demo Mode</span>
+    </header>
+
+    <section class="stats">
+      <article>
+        <small>Total Medicines</small>
+        <strong id="total">0</strong>
+      </article>
+
+      <article>
+        <small>Pending Doses</small>
+        <strong id="pending">0</strong>
+      </article>
+
+      <article>
+        <small>Taken Doses</small>
+        <strong id="taken">0</strong>
+      </article>
+    </section>
+
+    <div class="columns">
+
+      <section class="panel">
+        <h2>Add medicine</h2>
+
+        <form id="medicineForm">
+          <label>
+            Medicine name
+            <input id="medicineName"
+                   placeholder="e.g. Vitamin C"
+                   maxlength="60"
+                   required>
+          </label>
+
+          <label>
+            Dose time
+            <input id="medicineTime"
+                   type="time"
+                   required>
+          </label>
+
+          <button type="submit" id="saveBtn">
+            Add Medicine
+          </button>
+
+          <button type="button"
+                  id="cancelBtn"
+                  class="secondary hidden">
+            Cancel Edit
+          </button>
+        </form>
+
+        <p class="hint">
+          Demo data is saved in this browser only.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>Box conditions</h2>
+
+        <div class="readings">
+          <div>
+            <small>Temperature</small>
+            <strong id="temperature">24 °C</strong>
+          </div>
+
+          <div>
+            <small>Humidity</small>
+            <strong id="humidity">50 %</strong>
+          </div>
+        </div>
+
+        <p id="environmentStatus" class="ok">
+          Conditions normal · Demo readings
+        </p>
+
+        <h2 class="subheading">Box status</h2>
+
+        <p id="boxStatus">
+          Waiting for next dose
+        </p>
+
+        <p id="alarmStatus">
+          Alarm: OFF
+        </p>
+      </section>
+
+    </div>
+
+    <section class="panel">
+      <div class="table-title">
+        <h2>Medicine schedule</h2>
+        <span id="feedback" aria-live="polite"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="medicineRows"></tbody>
+        </table>
+      </div>
+
+      <p id="emptyState" class="hint">
+        No medicines added yet.
+      </p>
+    </section>
+
+    <footer>
+      Smart Medicine Box · Dashboard prototype · REST API integration pending
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
