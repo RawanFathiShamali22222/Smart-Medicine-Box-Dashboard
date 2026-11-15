@@ -21,6 +21,12 @@
       <span class="status">● Demo Mode</span>
     </header>
 
+    <!-- DUE MEDICATION ALERT -->
+    <section id="dueBanner" class="due-banner hidden" role="alert">
+      <strong id="dueMessage"></strong>
+    </section>
+
+    <!-- STATISTICS -->
     <section class="stats">
       <article>
         <small>Total Medicines</small>
@@ -40,6 +46,7 @@
 
     <div class="columns">
 
+      <!-- ADD / EDIT MEDICATION -->
       <section class="panel">
         <h2>Add medicine</h2>
 
@@ -47,7 +54,15 @@
           <label>
             Medicine name
             <input id="medicineName"
-                   placeholder="e.g. Vitamin C"
+                   placeholder="e.g. Panadol"
+                   maxlength="60"
+                   required>
+          </label>
+
+          <label>
+            Dose
+            <input id="medicineDose"
+                   placeholder="e.g. 1 tablet"
                    maxlength="60"
                    required>
           </label>
@@ -75,38 +90,40 @@
         </p>
       </section>
 
+      <!-- SENSOR READINGS -->
       <section class="panel">
         <h2>Box conditions</h2>
 
         <div class="readings">
           <div>
             <small>Temperature</small>
-            <strong id="temperature">24 °C</strong>
+            <strong id="temperature">-- °C</strong>
           </div>
 
           <div>
             <small>Humidity</small>
-            <strong id="humidity">50 %</strong>
+            <strong id="humidity">-- %</strong>
           </div>
         </div>
 
         <p id="environmentStatus" class="ok">
-          Conditions normal · Demo readings
+          Waiting for sensor readings
         </p>
 
         <h2 class="subheading">Box status</h2>
 
         <p id="boxStatus">
-          Waiting for next dose
+          Waiting for status
         </p>
 
         <p id="alarmStatus">
-          Alarm: OFF
+          Alarm: --
         </p>
       </section>
 
     </div>
 
+    <!-- MEDICATION TABLE -->
     <section class="panel">
       <div class="table-title">
         <h2>Medicine schedule</h2>
@@ -118,6 +135,7 @@
           <thead>
             <tr>
               <th>Medicine</th>
+              <th>Dose</th>
               <th>Time</th>
               <th>Status</th>
               <th>Actions</th>
@@ -134,7 +152,7 @@
     </section>
 
     <footer>
-      Smart Medicine Box · Dashboard prototype · REST API integration pending
+      Smart Medicine Box · IoT Medication Management System
     </footer>
 
   </div>
