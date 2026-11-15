@@ -1,1 +1,315 @@
-:root{font-family:Inter,system-ui,-apple-system,Arial,sans-serif;color:#182b40;background:#f3f7fb}*{box-sizing:border-box}body{margin:0}.shell{max-width:1120px;margin:auto;padding:36px 22px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:26px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:2px;color:#27818d}h1{font-size:34px;margin:8px 0}header p,.hint,footer{color:#718198}header p{margin:0}.status{background:#e6f5ee;color:#177d57;border-radius:20px;padding:9px 15px;font-size:13px;font-weight:700;white-space:nowrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}.stats article,.panel{background:#fff;border:1px solid #e1eaf2;border-radius:15px;padding:24px;box-shadow:0 5px 24px #16395708}.stats small,.readings small{display:block;color:#718198;margin-bottom:12px}.stats strong{font-size:35px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}h2{font-size:19px;margin:0 0 22px}label{display:block;font-size:13px;font-weight:700;margin-bottom:16px}input{display:block;width:100%;padding:13px;border:1px solid #ccd8e5;border-radius:9px;margin-top:7px;font:inherit;background:white}input:focus{outline:2px solid #7dcbd0}button{border:0;border-radius:9px;background:#147f8b;color:white;padding:12px 16px;font-weight:700;cursor:pointer}button:hover{filter:brightness(.94)}button.secondary{background:#e7eef4;color:#304b64;margin-left:8px}.hidden{display:none}.hint{font-size:12px}.readings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.readings>div{padding:18px;background:#f4f8fb;border-radius:10px}.readings strong{font-size:27px}.ok{color:#16845d;background:#e8f7ee;padding:10px;border-radius:9px;font-size:13px}.subheading{margin:24px 0 10px}.table-title{display:flex;justify-content:space-between;gap:12px;align-items:center}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}th,td{padding:15px 10px;border-bottom:1px solid #e9eef4;font-size:14px}th{color:#718198;font-size:12px}.pill{padding:6px 10px;border-radius:30px;font-size:12px;font-weight:700}.pending{background:#fff4db;color:#996200}.taken{background:#e7f7ed;color:#197a4c}.actions{display:flex;flex-wrap:wrap;gap:7px}.actions button{padding:7px 10px;font-size:12px}.actions button.delete{background:#fce8e8;color:#b42b35}.actions button.edit{background:#e9f1fc;color:#2763a4}.actions button.confirm{background:#e6f6ef;color:#177b53}footer{text-align:center;margin:25px 0;font-size:12px}@media(max-width:720px){.columns{grid-template-columns:1fr}.shell{padding:22px 12px}.stats{gap:8px}.stats article,.panel{padding:16px}.stats strong{font-size:26px}h1{font-size:26px}header{flex-direction:column}}
+
+:root {
+  font-family: Inter, system-ui, -apple-system, Arial, sans-serif;
+  color: #182b40;
+  background: #f3f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.shell {
+  max-width: 1120px;
+  margin: auto;
+  padding: 36px 22px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #27818d;
+}
+
+h1 {
+  font-size: 34px;
+  margin: 8px 0;
+}
+
+header p,
+.hint,
+footer {
+  color: #718198;
+}
+
+header p {
+  margin: 0;
+}
+
+.status {
+  background: #e6f5ee;
+  color: #177d57;
+  border-radius: 20px;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.stats article,
+.panel {
+  background: #fff;
+  border: 1px solid #e1eaf2;
+  border-radius: 15px;
+  padding: 24px;
+  box-shadow: 0 5px 24px #16395708;
+}
+
+.stats small,
+.readings small {
+  display: block;
+  color: #718198;
+  margin-bottom: 12px;
+}
+
+.stats strong {
+  font-size: 35px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+h2 {
+  font-size: 19px;
+  margin: 0 0 22px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ccd8e5;
+  border-radius: 9px;
+  margin-top: 7px;
+  font: inherit;
+  background: white;
+}
+
+input:focus {
+  outline: 2px solid #7dcbd0;
+}
+
+button {
+  border: 0;
+  border-radius: 9px;
+  background: #147f8b;
+  color: white;
+  padding: 12px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(.94);
+}
+
+button.secondary {
+  background: #e7eef4;
+  color: #304b64;
+  margin-left: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+.hint {
+  font-size: 12px;
+}
+
+.readings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.readings > div {
+  padding: 18px;
+  background: #f4f8fb;
+  border-radius: 10px;
+}
+
+.readings strong {
+  font-size: 27px;
+}
+
+.ok {
+  color: #16845d;
+  background: #e8f7ee;
+  padding: 10px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.subheading {
+  margin: 24px 0 10px;
+}
+
+.table-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 15px 10px;
+  border-bottom: 1px solid #e9eef4;
+  font-size: 14px;
+}
+
+th {
+  color: #718198;
+  font-size: 12px;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Medication status colors */
+
+.pill.pending {
+  background: #e9edf2;
+  color: #566474;
+}
+
+.pill.due {
+  background: #ffe1e1;
+  color: #c62828;
+}
+
+.pill.taken {
+  background: #e7f7ed;
+  color: #197a4c;
+}
+
+.pill.missed {
+  background: #fff0d9;
+  color: #b86b00;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.actions button {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.actions button.delete {
+  background: #fce8e8;
+  color: #b42b35;
+}
+
+.actions button.edit {
+  background: #e9f1fc;
+  color: #2763a4;
+}
+
+.actions button.confirm {
+  background: #e6f6ef;
+  color: #177b53;
+}
+
+/* Due medication alert */
+
+.due-banner {
+  background: #fff0f0;
+  border: 2px solid #e53935;
+  color: #b71c1c;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.due-banner.hidden {
+  display: none;
+}
+
+footer {
+  text-align: center;
+  margin: 25px 0;
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .shell {
+    padding: 22px 12px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stats article,
+  .panel {
+    padding: 16px;
+  }
+
+  .stats strong {
+    font-size: 26px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  header {
+    flex-direction: column;
+  }
+}
