@@ -1,13 +1,14 @@
 
-const MODE = 'demo'; // Change to 'api' when ESP32 API is ready
-const API_BASE = '/api';
-const STORAGE_KEY = 'smartMedicineBoxDemoV1';
+const MODE = 'demo'; // Change to 'api' when backend is ready
+const API_BASE = 'http://COMPUTER_IP:3000/api';
+const STORAGE_KEY = 'smartMedicineBoxDemoV2';
 
 let medicines = MODE === 'demo' ? loadMedicines() : [];
 let editingId = null;
 
 const form = document.getElementById('medicineForm');
 const nameInput = document.getElementById('medicineName');
+const doseInput = document.getElementById('medicineDose');
 const timeInput = document.getElementById('medicineTime');
 const rows = document.getElementById('medicineRows');
 const feedback = document.getElementById('feedback');
@@ -44,7 +45,7 @@ function resetForm() {
     .classList.add('hidden');
 }
 
-// ---------------- DISPLAY MEDICINES ----------------
+// ---------------- DISPLAY ----------------
 
 function render() {
   rows.replaceChildren();
@@ -61,23 +62,46 @@ function render() {
   document.getElementById('emptyState')
     .classList.toggle('hidden', medicines.length > 0);
 
+  const dueMedicines = medicines.filter(
+    m => m.status === 'Due'
+  );
+
+  const dueBanner = document.getElementById('dueBanner');
+  const dueMessage = document.getElementById('dueMessage');
+
+  dueBanner.classList.toggle(
+    'hidden',
+    dueMedicines.length === 0
+  );
+
+  dueMessage.textContent = dueMedicines
+    .map(m => `Time to take ${m.name} - ${m.dose || ''}`)
+    .join(' | ');
+
   for (const m of medicines) {
     const tr = document.createElement('tr');
 
-    const tdName = document.createElement('td');
-    tdName.textContent = m.name;
-
-    const tdTime = document.createElement('td');
-    tdTime.textContent = m.time;
+    for (const value of [
+      m.name,
+      m.dose || '',
+      m.time
+    ]) {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.append(td);
+    }
 
     const tdStatus = document.createElement('td');
     const pill = document.createElement('span');
 
-    pill.className =
-      'pill ' + (m.status === 'Taken' ? 'taken' : 'pending');
+    const status = m.status || 'Pending';
+    const statusClass = ['Pending', 'Due', 'Taken', 'Missed']
+      .includes(status) ? status.toLowerCase() : 'pending';
 
-    pill.textContent = m.status;
+    pill.className = `pill ${statusClass}`;
+    pill.textContent = status;
     tdStatus.append(pill);
+    tr.append(tdStatus);
 
     const tdActions = document.createElement('td');
     tdActions.className = 'actions';
@@ -87,7 +111,6 @@ function render() {
       ['Delete', 'delete', () => removeMedicine(m.id)]
     ];
 
-    // Physical button confirms doses in API Mode
     if (MODE === 'demo' && m.status !== 'Taken') {
       actions.unshift([
         'Mark Taken',
@@ -98,104 +121,90 @@ function render() {
 
     for (const [label, cls, fn] of actions) {
       const button = document.createElement('button');
-
       button.type = 'button';
       button.className = cls;
       button.textContent = label;
       button.addEventListener('click', fn);
-
       tdActions.append(button);
     }
 
-    tr.append(tdName, tdTime, tdStatus, tdActions);
+    tr.append(tdActions);
     rows.append(tr);
   }
 }
 
-// ---------------- REST API FUNCTIONS ----------------
+// ---------------- API HELPERS ----------------
 
-// GET medicines
+async function apiRequest(path, options = {}) {
+  const response = await fetch(`${API_BASE}${path}`, options);
+
+  const text = await response.text();
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      if (!response.ok) {
+        throw new Error(text);
+      }
+      throw new Error('Invalid JSON response from server');
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error || `Request failed (${response.status})`
+    );
+  }
+
+  return data;
+}
+
+// ---------------- REST API ----------------
+
 async function getMedicines() {
-  const response = await fetch(`${API_BASE}/medicines`);
+  const data = await apiRequest('/medications');
 
-  if (!response.ok) {
-    throw new Error('GET medicines failed');
+  if (!Array.isArray(data)) {
+    throw new Error('Expected medications array');
   }
 
-  return await response.json();
+  return data;
 }
 
-// POST medicine
-async function addMedicineAPI(name, time) {
-  const response = await fetch(`${API_BASE}/medicines`, {
+async function addMedicineAPI(name, time, dose) {
+  return apiRequest('/medications', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ name, time })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, time, dose })
   });
-
-  if (!response.ok) {
-    throw new Error('POST medicine failed');
-  }
-
-  return response;
 }
 
-// PUT medicine
-async function updateMedicineAPI(id, name, time) {
-  const response = await fetch(
-    `${API_BASE}/medicines/${encodeURIComponent(id)}`,
+async function updateMedicineAPI(id, name, time, dose) {
+  return apiRequest(
+    `/medications/${encodeURIComponent(id)}`,
     {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, time })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, time, dose })
     }
   );
-
-  if (!response.ok) {
-    throw new Error('PUT medicine failed');
-  }
-
-  return response;
 }
 
-// DELETE medicine
 async function deleteMedicineAPI(id) {
-  const response = await fetch(
-    `${API_BASE}/medicines/${encodeURIComponent(id)}`,
-    {
-      method: 'DELETE'
-    }
+  return apiRequest(
+    `/medications/${encodeURIComponent(id)}`,
+    { method: 'DELETE' }
   );
-
-  if (!response.ok) {
-    throw new Error('DELETE medicine failed');
-  }
 }
 
-// GET temperature and humidity
 async function getReadings() {
-  const response = await fetch(`${API_BASE}/readings`);
-
-  if (!response.ok) {
-    throw new Error('GET readings failed');
-  }
-
-  return await response.json();
+  return apiRequest('/readings');
 }
 
-// GET box status
 async function getBoxStatus() {
-  const response = await fetch(`${API_BASE}/status`);
-
-  if (!response.ok) {
-    throw new Error('GET status failed');
-  }
-
-  return await response.json();
+  return apiRequest('/status');
 }
 
 // ---------------- ADD / EDIT ----------------
@@ -204,17 +213,18 @@ form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
   const name = nameInput.value.trim();
+  const dose = doseInput.value.trim();
   const time = timeInput.value;
 
-  if (!name || !time) return;
+  if (!name || !dose || !time) return;
 
   try {
     if (MODE === 'api') {
       if (editingId !== null) {
-        await updateMedicineAPI(editingId, name, time);
+        await updateMedicineAPI(editingId, name, time, dose);
         message('Medicine updated.');
       } else {
-        await addMedicineAPI(name, time);
+        await addMedicineAPI(name, time, dose);
         message('Medicine added.');
       }
 
@@ -227,6 +237,7 @@ form.addEventListener('submit', async (event) => {
 
         if (medicine) {
           medicine.name = name;
+          medicine.dose = dose;
           medicine.time = time;
           message('Medicine updated (demo).');
         }
@@ -234,6 +245,7 @@ form.addEventListener('submit', async (event) => {
         medicines.push({
           id: crypto.randomUUID(),
           name,
+          dose,
           time,
           status: 'Pending'
         });
@@ -251,15 +263,15 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
-// ---------------- EDIT BUTTON ----------------
+// ---------------- EDIT ----------------
 
 function startEdit(id) {
   const medicine = medicines.find(m => m.id === id);
-
   if (!medicine) return;
 
   editingId = id;
   nameInput.value = medicine.name;
+  doseInput.value = medicine.dose || '';
   timeInput.value = medicine.time;
 
   document.getElementById('saveBtn').textContent =
@@ -271,7 +283,7 @@ function startEdit(id) {
   nameInput.focus();
 }
 
-// ---------------- DELETE BUTTON ----------------
+// ---------------- DELETE ----------------
 
 async function removeMedicine(id) {
   if (!confirm('Delete this medicine?')) return;
@@ -294,24 +306,21 @@ async function removeMedicine(id) {
   }
 }
 
-// ---------------- MARK TAKEN (DEMO ONLY) ----------------
+// ---------------- DEMO CONFIRMATION ----------------
 
 function markTaken(id) {
   if (MODE !== 'demo') return;
 
   const medicine = medicines.find(m => m.id === id);
-
   if (!medicine) return;
 
   medicine.status = 'Taken';
-
   saveMedicines();
   render();
-
   message('Dose marked taken (demo only).');
 }
 
-// ---------------- REFRESH MEDICINES ----------------
+// ---------------- AUTO REFRESH ----------------
 
 async function refreshMedicines() {
   if (MODE !== 'api') return;
@@ -323,8 +332,6 @@ async function refreshMedicines() {
     message('Error loading medicines: ' + error.message);
   }
 }
-
-// ---------------- SENSOR AND BOX STATUS ----------------
 
 async function refreshSensorAndStatus() {
   if (MODE !== 'api') return;
@@ -339,6 +346,9 @@ async function refreshSensorAndStatus() {
     document.getElementById('humidity').textContent =
       readings.humidity + ' %';
 
+    document.getElementById('environmentStatus').textContent =
+      'Live sensor readings';
+
     document.getElementById('boxStatus').textContent =
       status.box;
 
@@ -350,21 +360,17 @@ async function refreshSensorAndStatus() {
   }
 }
 
-// ---------------- INITIALIZE DASHBOARD ----------------
+// ---------------- INITIALIZE ----------------
 
 document.getElementById('cancelBtn')
   .addEventListener('click', resetForm);
 
-// Display correct mode
 document.querySelector('header .status').textContent =
   MODE === 'demo' ? '● Demo Mode' : '● API Mode';
 
 if (MODE === 'api') {
   document.querySelector('.hint').textContent =
-    'Medicine schedules are stored on ESP32.';
-
-  document.getElementById('environmentStatus').textContent =
-    'Live sensor readings';
+    'Medication schedules are stored on the backend.';
 
   refreshMedicines();
   refreshSensorAndStatus();
